@@ -1,0 +1,67 @@
+using BlazorPostgresStarter.Data;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Configure Railway PORT - Critical for Railway deployment
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+// Add services to the container
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+// Add PostgreSQL Database
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (!string.IsNullOrEmpty(connectionString))
+{
+    // Railway provides DATABASE_URL, convert to EF Core format
+    connectionString = ConvertToEFConnectionString(connectionString);
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
+else
+{
+    // Fallback for local development
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
+
+// Add health checks for Railway monitoring
+builder.Services.AddHealthChecks();
+
+var app = builder.Build();
+
+// Auto-migrate database on startup (for Railway)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
+// Configure the HTTP request pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+}
+
+app.UseStaticFiles();
+app.UseAntiforgery();
+
+// Health check endpoint for Railway
+app.MapHealthChecks("/health");
+
+app.MapRazorComponents<BlazorPostgresStarter.Components.App>()
+    .AddInteractiveServerRenderMode();
+
+app.Run();
+
+// Helper method to convert Railway DATABASE_URL to EF Core format
+static string ConvertToEFConnectionString(string databaseUrl)
+{
+    var uri = new Uri(databaseUrl);
+    var userInfo = uri.UserInfo.Split(':');
+    
+    return $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.Trim('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+}

@@ -1,0 +1,18 @@
+notepad .dockerignore
+```
+
+**Paste this:**
+```
+**/bin/
+**/obj/
+**/out/
+**/.vs/
+**/.vscode/
+**/.idea/
+**/node_modules/
+**/.git/
+**/.gitignore
+**/.dockerignore
+**/README.md
+**/LICENSE
+**/*.md
