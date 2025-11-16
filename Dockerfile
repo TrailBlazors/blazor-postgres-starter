@@ -10,7 +10,7 @@ RUN dotnet build "BlazorPostgresStarter.csproj" -c Release -o /app/build
 
 # Stage 2: Publish
 FROM build AS publish
-RUN dotnet publish "BlazorServerStarter.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "BlazorPostgresStarter.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Stage 3: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
