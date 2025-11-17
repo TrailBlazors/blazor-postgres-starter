@@ -28,6 +28,9 @@ else
         options.UseNpgsql(connectionString));
 }
 
+// Add the sample service
+builder.Services.AddScoped<BlazorPostgresStarter.Services.SampleItemService>();
+
 // Add health checks for Railway monitoring
 builder.Services.AddHealthChecks();
 
