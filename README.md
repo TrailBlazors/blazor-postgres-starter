@@ -4,7 +4,7 @@
 
 Build full-stack web applications with C# and .NET 9. This template includes Entity Framework Core, automatic database migrations, and a complete CRUD demo ready to extend.
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/TEMPLATE_ID)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.com/deploy/blazor-postgresql--1)
 
 ## ✨ Features
 
