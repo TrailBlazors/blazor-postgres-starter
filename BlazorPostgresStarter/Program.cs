@@ -17,14 +17,14 @@ if (!string.IsNullOrEmpty(connectionString))
 {
     // Railway provides DATABASE_URL, convert to EF Core format
     connectionString = ConvertToEFConnectionString(connectionString);
-    builder.Services.AddDbContext<AppDbContext>(options =>
+    builder.Services.AddDbContextFactory<AppDbContext>(options =>
         options.UseNpgsql(connectionString));
 }
 else
 {
     // Fallback for local development
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    builder.Services.AddDbContext<AppDbContext>(options =>
+    builder.Services.AddDbContextFactory<AppDbContext>(options =>
         options.UseNpgsql(connectionString));
 }
 
@@ -40,7 +40,8 @@ try
 {
     using (var scope = app.Services.CreateScope())
     {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
+        await using var db = await dbContextFactory.CreateDbContextAsync();
         db.Database.Migrate();
     }
 }
