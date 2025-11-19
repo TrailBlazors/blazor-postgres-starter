@@ -21,14 +21,21 @@ Build full-stack web applications with C# and .NET 9. This template includes Ent
 
 ### Deploy to Railway
 
-Click the "Deploy on Railway" button above. Railway will automatically:
-- Deploy the Blazor application
-- Provision a PostgreSQL database
-- Connect them together
-- Run database migrations
-- Generate a public URL
+Click the "Deploy on Railway" button above, then:
 
-**Visit `/database` page to see the CRUD demo in action!**
+1. **Add PostgreSQL Database:**
+   - After the app deploys, click **"+ New"** → **"Database"** → **"Add PostgreSQL"**
+   - The `DATABASE_URL` variable will automatically be added to your app
+
+2. **Redeploy:**
+   - Your app will automatically redeploy with the database connected
+   - Migrations run automatically on startup
+
+3. **Visit your app:**
+   - Open the generated Railway URL
+   - Go to `/database` to see the CRUD demo!
+
+**✨ First deployment may show an error until PostgreSQL is added - this is expected!**
 
 ### Local Development
 ```bash
